@@ -10,3 +10,14 @@ backend:
     b-service: "http://localhost:8084"
   kafka:
     ping-topic: hello-message-topic
+
+logbook:
+  filter.enabled: true
+  format.style: json  # Logs requests/responses in JSON format
+  obfuscate:
+    headers: ["Authorization", "Cookie"]  # Mask sensitive headers
+    parameters: ["password"]  # Mask sensitive query parameters
+  exclude:
+    - "/actuator/**"  # Exclude actuator endpoints from logging
+  write:
+    category: logbook  # Log messages under "logbook" category
