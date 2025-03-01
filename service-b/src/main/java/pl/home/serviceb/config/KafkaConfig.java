@@ -1,5 +1,6 @@
 package pl.home.serviceb.config;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -17,6 +18,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -31,6 +33,7 @@ public class KafkaConfig {
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, List.of(KafkaCorrelationProducerInterceptor.class));
 		return new DefaultKafkaProducerFactory<>(config);
 	}
 
@@ -48,6 +51,7 @@ public class KafkaConfig {
 		config.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
 			StringDeserializer.class);
 		config.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, "group_id");
+		config.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, List.of(KafkaCorrelationConsumerInterceptor.class));
 		return new DefaultKafkaConsumerFactory<>(config);
 	}
 
