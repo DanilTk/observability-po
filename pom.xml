@@ -23,10 +23,17 @@
 		<micrometer-tracing.version>1.4.3</micrometer-tracing.version>
 		<logbook.version>3.10.0</logbook.version>
 		<otel.version>1.43.0</otel.version>
+		<logstash.version>8.0</logstash.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>net.logstash.logback</groupId>
+				<artifactId>logstash-logback-encoder</artifactId>
+				<version>${logstash.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>io.micrometer</groupId>
 				<artifactId>micrometer-tracing</artifactId>
@@ -54,6 +61,11 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>

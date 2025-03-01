@@ -15,7 +15,7 @@ public class BService {
 	@KafkaListener(topics = "${backend.kafka.ping-topic}")
 	public void ping(@Header(name = CORRELATION_ID_HEADER, required = false) String correlationId,
 					 ConsumerRecord<String, String> record) {
-		log.info("Message received: {} with correlation id: {}", record.key(), correlationId);
+		log.info("Message received: {} with correlation id: {}", record.value(), correlationId);
 	}
 
 }
