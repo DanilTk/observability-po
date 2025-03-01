@@ -6,3 +6,7 @@ spring:
     bootstrap-servers: localhost:29092
     properties:
       allow.auto.create.topics: true
+
+backend:
+  kafka:
+    ping-topic: hello-message-topic

@@ -5,7 +5,8 @@ spring:
   kafka:
     bootstrap-servers: localhost:29092
 
-logging:
-  level:
-    org.apache.kafka: DEBUG
-    org.springframework.kafka: DEBUG
+backend:
+  client-url:
+    b-service: "http://localhost:8084"
+  kafka:
+    ping-topic: hello-message-topic
