@@ -1,0 +1,102 @@
+[
+  {
+    "type": "record",
+    "name": "CostSheetMetadata",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "totalCost", "type": "double" },
+      { "name": "discountedCost", "type": "double" }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "QuotationAttributesMetadata",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "currency", "type": "string" },
+      { "name": "discountRate", "type": "double" },
+      { "name": "salesRepId", "type": "string" }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "QuotationMetadata",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "id", "type": "string" },
+      { "name": "name", "type": "string" },
+      { "name": "customerId", "type": "string" },
+      { "name": "createdAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+      { "name": "validUntil", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+      { "name": "status", "type": "string" }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "CostItem",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "id", "type": "string" },
+      { "name": "productCode", "type": "string" },
+      { "name": "description", "type": "string" },
+      { "name": "quantity", "type": "int" },
+      { "name": "unitPrice", "type": "double" },
+      { "name": "totalPrice", "type": "double" },
+      { "name": "category", "type": "string" }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "CostSheet",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "totalCost", "type": "double" },
+      { "name": "discountedCost", "type": "double" },
+      { "name": "oldCostItems", "type": { "type": "array", "items": "com.example.common.event.CostItem" } },
+      { "name": "newCostItems", "type": { "type": "array", "items": "com.example.common.event.CostItem" } }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "QuotationAttributes",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "currency", "type": "string" },
+      { "name": "discountRate", "type": "double" },
+      { "name": "salesRepId", "type": "string" }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "QuotationEvent",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "quotationId", "type": "string" },
+      { "name": "quotationMetadata", "type": ["null", "com.example.common.event.QuotationMetadata"], "default": null },
+      { "name": "quotationAttributesMetadata", "type": ["null", "com.example.common.event.QuotationAttributesMetadata"], "default": null },
+      { "name": "costSheetMetadata", "type": ["null", "com.example.common.event.CostSheetMetadata"], "default": null },
+      { "name": "oldCostItems", "type": { "type": "array", "items": "com.example.common.event.CostItem" }, "default": [] },
+      { "name": "newCostItems", "type": { "type": "array", "items": "com.example.common.event.CostItem" }, "default": [] },
+      { "name": "chunkIndex", "type": "int" },
+      { "name": "totalChunks", "type": "int" }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "Quotation",
+    "namespace": "com.example.common.event",
+    "fields": [
+      { "name": "id", "type": "string" },
+      { "name": "name", "type": "string" },
+      { "name": "customerId", "type": "string" },
+      { "name": "createdAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+      { "name": "validUntil", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+      {
+        "name": "status",
+        "type": { "type": "enum", "name": "Status", "symbols": ["DRAFT", "APPROVED", "REJECTED"] }
+      },
+      { "name": "quotationAttributes", "type": "com.example.common.event.QuotationAttributes" },
+      { "name": "costSheet", "type": "com.example.common.event.CostSheet" }
+    ]
+  }
+]

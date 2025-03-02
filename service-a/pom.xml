@@ -37,6 +37,28 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>${avro.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>schema</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sourceDirectory>${project.basedir}/src/main/avro</sourceDirectory>
+					<outputDirectory>${project.build.directory}/generated-sources/avro</outputDirectory>
+					<includes>
+						<include>**/*.avsc</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
 </project>
