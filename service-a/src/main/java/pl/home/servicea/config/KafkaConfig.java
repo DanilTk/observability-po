@@ -1,6 +1,10 @@
 package pl.home.servicea.config;
 
+import com.example.common.event.QuotationEvent;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -35,6 +39,16 @@ public class KafkaConfig {
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		config.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, List.of(KafkaCorrelationProducerInterceptor.class));
 		return new DefaultKafkaProducerFactory<>(config);
+	}
+
+	@Bean
+	public Producer<String, QuotationEvent> kafkaProducer() {
+		Map<String, Object> config = new HashMap<>();
+		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+		config.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, List.of(KafkaCorrelationProducerInterceptor.class));
+		return new KafkaProducer<>(config);
 	}
 
 	@Bean

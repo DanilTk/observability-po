@@ -10,6 +10,7 @@ backend:
     b-service: "http://localhost:8084"
   kafka:
     ping-topic: hello-message-topic
+    quotation-event-topic: quotation-event-topic
 
 logbook:
   filter.enabled: true
