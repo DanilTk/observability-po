@@ -4,6 +4,9 @@ server:
 spring:
   kafka:
     bootstrap-servers: localhost:29092
+    properties:
+      allow.auto.create.topics: true
+      schema.registry.url: http://localhost:8086
 
 backend:
   client-url:
@@ -11,14 +14,3 @@ backend:
   kafka:
     ping-topic: hello-message-topic
     quotation-event-topic: quotation-event-topic
-
-logbook:
-  filter.enabled: true
-  format.style: json  # Logs requests/responses in JSON format
-  obfuscate:
-    headers: ["Authorization", "Cookie"]  # Mask sensitive headers
-    parameters: ["password"]  # Mask sensitive query parameters
-  exclude:
-    - "/actuator/**"  # Exclude actuator endpoints from logging
-  write:
-    category: logbook  # Log messages under "logbook" category

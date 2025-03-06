@@ -1,24 +1,17 @@
 package pl.home.serviceb.config;
 
+import com.example.common.event.QuotationEvent;
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -27,41 +20,34 @@ public class KafkaConfig {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
 
+	@Value("${spring.kafka.properties.schema.registry.url}")
+	private String schemaRegistryUrl;
+
 	@Bean
-	public ProducerFactory<String, String> producerFactory() {
-		Map<String, Object> config = new HashMap<>();
-		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		config.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, List.of(KafkaCorrelationProducerInterceptor.class));
-		return new DefaultKafkaProducerFactory<>(config);
+	public Map<String, Object> consumerConfigs() {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers); // Kafka Broker
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "quotation-consumer-group"); // Consumer Group ID
+		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // Start from earliest if no offset is stored
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+		props.put("schema.registry.url", schemaRegistryUrl); // Schema Registry URL
+		props.put("specific.avro.reader", true); // Use Specific Avro Record
+
+		return props;
 	}
 
 	@Bean
-	public KafkaTemplate<String, String> kafkaTemplate() {
-		return new KafkaTemplate<>(producerFactory());
+	public ConsumerFactory<String, QuotationEvent> consumerFactory() {
+		return new DefaultKafkaConsumerFactory<>(consumerConfigs());
 	}
 
 	@Bean
-	public ConsumerFactory<String, String> consumerFactory() {
-		Map<String, Object> config = new HashMap<>();
-		config.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-		config.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-			StringDeserializer.class);
-		config.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-			StringDeserializer.class);
-		config.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, "group_id");
-		config.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, List.of(KafkaCorrelationConsumerInterceptor.class));
-		return new DefaultKafkaConsumerFactory<>(config);
-	}
-
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, String> factory =
+	public ConcurrentKafkaListenerContainerFactory<String, QuotationEvent> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, QuotationEvent> factory =
 			new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
-		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
-		factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(1000L, 3)));
 		return factory;
 	}
+
 }

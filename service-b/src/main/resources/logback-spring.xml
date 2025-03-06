@@ -7,36 +7,7 @@
 		</encoder>
 	</appender>
 
-	<appender name="LOGSTASH_APPENDER" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-		<destination>localhost:5044</destination> <!-- Logstash listening on port 5000 -->
-		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-			<providers>
-				<timestamp>
-					<fieldName>timestamp</fieldName>
-				</timestamp>
-				<pattern>
-					<pattern>
-						{
-						"timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}",
-						"level": "%level",
-						"logger": "%logger",
-						"thread": "%thread",
-						"correlation-id": "%X{correlation-id}",
-						"message": "%message",
-						"class": "%class",
-						"method": "%method",
-						"line": "%L"
-						}
-					</pattern>
-				</pattern>
-			</providers>
-		</encoder>
-	</appender>
-
-	<logger name="org.zalando.logbook" level="TRACE" />
-
 	<root level="INFO">
 		<appender-ref ref="CONSOLE_APPENDER"/>
-		<appender-ref ref="LOGSTASH_APPENDER"/>
 	</root>
 </configuration>
